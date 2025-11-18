@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace World;
 
@@ -14,6 +15,9 @@ public partial class WorldNode : Node2D
     /// The world data associated with this node.
     /// </summary>
     public World Data { get; private set; }
+
+    [Export]
+    public FastNoiseLite Noise;
 
     /// <summary>
     /// Instantiates a WorldNode with the provided world data.
@@ -35,18 +39,23 @@ public partial class WorldNode : Node2D
     public void Init(World data)
     {
         Data = data;
+        Noise = data.Noise;
 
+        DrawTiles();
+
+    }
+
+    public void DrawTiles()
+    {
         var terrainLayer = GetNode<TileMapLayer>("TerrainLayer");
         var terrainTileSet = terrainLayer.TileSet;
         var terrainMapping = new Dictionary<string, int>();
         for (int i = 0; i < terrainTileSet.GetTerrainsCount(0); i++)
             terrainMapping[terrainTileSet.GetTerrainName(0, i)] = i;
-
         foreach (var (coords, tile) in Data.TerrainTiles)
         {
             terrainLayer.SetCellsTerrainConnect([coords], 0, terrainMapping[tile.Name]);
         }
-        terrainLayer.UpdateInternals();
     }
 
     /// <summary>
@@ -70,6 +79,23 @@ public partial class WorldNode : Node2D
             Vector2 worldCoords = GetLocalMousePosition();
             Vector2I tileCoords = GetNode<TileMapLayer>("TerrainLayer").LocalToMap(worldCoords);
             GD.Print($"WorldNode: Mouse clicked at world position: {worldCoords}, tile coordinates: {tileCoords}, tile type: {Data.TerrainTiles.GetValueOrDefault(tileCoords)?.Name ?? "None"}");
-        }   
+        }
+
+        else if (@event is InputEventMouseButton mouseEvent1 && mouseEvent1.ButtonIndex == MouseButton.WheelUp)
+        {
+            GetNode<Camera2D>("Camera2D").Zoom += new Vector2(0.1f, 0.1f);
+        }
+
+        else if (@event is InputEventMouseButton mouseEvent2 && mouseEvent2.ButtonIndex == MouseButton.WheelDown)
+        {
+            GetNode<Camera2D>("Camera2D").Zoom -= new Vector2(0.1f, 0.1f);
+        }
     }
+
+    public override void _Process(double delta)
+    {
+        Data.FillTiles();
+        //DrawTiles();
+    }
+
 }

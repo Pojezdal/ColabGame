@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace World;
 
@@ -15,24 +16,26 @@ public partial class World : RefCounted
     /// </summary>
     public Dictionary<Vector2I, Terrain.TerrainTile> TerrainTiles { get; private set; } = new();
 
+    public FastNoiseLite Noise = GD.Load<FastNoiseLite>("res://Assets/Resources/island_generating_noise.tres");
+
     /// <summary>
     /// Initializes a new instance of the World class with random terrain tiles.
     /// </summary>
     public World()
     {
-        for (int x = 0; x < 10; x++)
+        FillTiles();
+    }
+
+    public void FillTiles()
+    {
+        for (int x = 0; x < 100; x++)
         {
-            for (int y = 0; y < 10; y++)
+            for (int y = 0; y < 100; y++)
             {
-                string type = Random.Shared.Next(0, 4) switch
-                {
-                    0 => "Grass",
-                    1 => "Water",
-                    2 => "Sand",
-                    3 => "Stone",
-                    _ => "Grass"
-                };
-                
+                float n = Noise.GetNoise2D((float)y, (float)x);
+                string type;
+                if (n <= -0.2) type = "Sand";
+                else type = "Water";
                 TerrainTiles[new(x, y)] = new Terrain.TerrainTile(type);
             }
         }
