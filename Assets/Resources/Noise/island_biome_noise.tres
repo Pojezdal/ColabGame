@@ -1,0 +1,10 @@
+[gd_resource type="FastNoiseLite" script_class="FastNoiseExt" load_steps=2 format=3 uid="uid://mp8y6nk7f1lh"]
+
+[ext_resource type="Script" uid="uid://dbcidaatcbqyw" path="res://Scripts/Common/Extended/FastNoiseExt.cs" id="1_c3h6c"]
+
+[resource]
+frequency = 0.1
+fractal_octaves = 3
+script = ExtResource("1_c3h6c")
+Normalize = false
+metadata/_custom_type_script = "uid://dbcidaatcbqyw"

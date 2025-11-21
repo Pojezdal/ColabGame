@@ -89,6 +89,11 @@ public partial class WorldNode : Node2D
     public void Init(World data)
     {
         Data = data;
+        Data.Changed += () =>
+        {
+            UnloadAllChunks();
+            UpdateChunks(_lastCenterChunk);
+        };
         // Load tile size and terrain mapping from TileSet
         var terrainTileSet = GetNode<TileMapLayer>("TerrainLayer").TileSet;
         _tileSize = terrainTileSet.TileSize;
@@ -98,12 +103,6 @@ public partial class WorldNode : Node2D
 
         // Initial chunk update and subscribe to settings change to update chunks if the world changes
         UpdateChunks(Vector2I.Zero);
-        Data.SettingsChanged += () =>
-        {
-            GD.Print("WorldNode: World settings changed, clearing loaded chunks");
-            UnloadAllChunks();
-            _lastCenterChunk = new Vector2I(int.MinValue, int.MinValue);
-        };
     }
 
     /// <summary>
@@ -138,7 +137,7 @@ public partial class WorldNode : Node2D
         {
             Vector2 worldCoords = GetLocalMousePosition();
             Vector2I tileCoords = GetNode<TileMapLayer>("TerrainLayer").LocalToMap(worldCoords);
-            GD.Print($"WorldNode: Mouse clicked at world position: {worldCoords}, tile coordinates: {tileCoords}, tile type: {Data.TerrainTiles.GetValueOrDefault(tileCoords)?.Name ?? "None"}");
+            GD.Print($"WorldNode: Mouse clicked at world position: {worldCoords}, tile coordinates: {tileCoords}, chunk: {LocalToChunk(worldCoords)}, tile type: {Data.TerrainTiles.GetValueOrDefault(tileCoords)?.Name ?? "None"}");
         }
     }
 
@@ -225,7 +224,7 @@ public partial class WorldNode : Node2D
         // as there are different terrain types in the chunk
         foreach (var (name, tiles) in terrains)
         {
-            int terrainIndex = _terrainMapping[name];
+            int terrainIndex = _terrainMapping.GetValueOrDefault(name, -1);
             GD.Print($"Terrain {name} at chunk {chunkPosition} with {tiles.Count} tiles");
             for (int j = 0; j < tiles.Count; j += _batchSize)
             {

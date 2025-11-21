@@ -21,6 +21,9 @@ texture_region_size = Vector2i(32, 32)
 0:3/0 = 0
 0:3/0/terrain_set = 0
 0:3/0/terrain = 3
+0:4/0 = 0
+0:4/0/terrain_set = 0
+0:4/0/terrain = 4
 
 [sub_resource type="TileSet" id="TileSet_7drjl"]
 tile_size = Vector2i(32, 32)
@@ -33,11 +36,15 @@ terrain_set_0/terrain_2/name = "Sand"
 terrain_set_0/terrain_2/color = Color(0.7734375, 0.48798457, 0.22721745, 1)
 terrain_set_0/terrain_3/name = "Stone"
 terrain_set_0/terrain_3/color = Color(0.3776042, 0.3694663, 0.367576, 1)
+terrain_set_0/terrain_4/name = "Center"
+terrain_set_0/terrain_4/color = Color(0.4898492, 0.0022005176, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_nn42t")
 
 [node name="WorldNode" type="Node2D"]
 script = ExtResource("1_t17jd")
-_batchSize = 256
+_chunkSize = 64
+_chunkRetentionMargin = 5
+_batchSize = 4096
 
 [node name="TerrainLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_7drjl")

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="IslandSeedConf" load_steps=4 format=3 uid="uid://dmhva26rw1tl8"]
+
+[ext_resource type="FastNoiseLite" uid="uid://mp8y6nk7f1lh" path="res://Assets/Resources/Noise/island_biome_noise.tres" id="1_elpkh"]
+[ext_resource type="Script" uid="uid://clmwpmgk3ui7n" path="res://Scripts/World/Island/IslandSeedConf.cs" id="1_tuwt5"]
+[ext_resource type="FastNoiseLite" uid="uid://bsx303b053u6t" path="res://Assets/Resources/Noise/island_shape_noise.tres" id="2_4rg4g"]
+
+[resource]
+script = ExtResource("1_tuwt5")
+ShapeNoise = ExtResource("2_4rg4g")
+BiomeNoise = ExtResource("1_elpkh")
+metadata/_custom_type_script = "uid://clmwpmgk3ui7n"

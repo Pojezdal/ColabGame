@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace World;
 
@@ -12,16 +11,15 @@ namespace World;
 public partial class World : Resource
 {
     /// <summary>
-    /// Signal emitted when world settings change, such as thresholds or the noise function.
-    /// </summary>
-    [Signal]
-    public delegate void SettingsChangedEventHandler();
-
-    /// <summary>
-    /// The noise function used to generate terrain heights.
+    /// Configuration for island generation in the world.
     /// </summary>
     [Export]
-    public Common.Extended.FastNoiseExt Noise { get; private set; } = null;
+    public Island.IslandSeedConf IslandConfig { get; private set; } = null;
+
+    /// <summary>
+    /// Mapping of island cell coordinates to island seeds in the world.
+    /// </summary>
+    private Dictionary<Vector2I, Island.IslandSeed> _islandSeeds = new();
 
     /// <summary>
     /// Mapping of coordinates to terrain tiles in the world.
@@ -29,117 +27,23 @@ public partial class World : Resource
     public Dictionary<Vector2I, Terrain.TerrainTile> TerrainTiles { get; private set; } = new();
 
     /// <summary>
-    /// Backing field for <see cref="WaterLevel"/>.
-    /// </summary>
-    private float _waterLevel = 0.3f;
-
-    /// <summary>
-    /// Noise threshold for water terrain.
-    /// Noise values below this level will be considered water.
-    /// </summary>
-    [Export]
-    public float WaterLevel
-    {
-        get => _waterLevel;
-        set
-        {
-            if (_waterLevel != value)
-            {
-                _waterLevel = value;
-                TerrainTiles.Clear();
-                EmitSignal(SignalName.SettingsChanged);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Backing field for <see cref="SandLevel"/>.
-    /// </summary>
-    private float _sandLevel = 0.4f;
-
-    /// <summary>
-    /// Noise threshold for sand terrain.
-    /// Noise values between WaterLevel and SandLevel will be considered sand.
-    /// </summary>
-    [Export]
-    public float SandLevel
-    {
-        get => _sandLevel;
-        set
-        {
-            if (_sandLevel != value)
-            {
-                _sandLevel = value;
-                TerrainTiles.Clear();
-                EmitSignal(SignalName.SettingsChanged);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Backing field for <see cref="GrassLevel"/>.
-    /// </summary>
-    private float _grassLevel = 0.6f;
-
-    /// <summary>
-    /// Noise threshold for grass terrain.
-    /// Noise values between SandLevel and GrassLevel will be considered grass.
-    /// </summary>
-    [Export]
-    public float GrassLevel
-    {
-        get => _grassLevel;
-        set
-        {
-            if (_grassLevel != value)
-            {
-                _grassLevel = value;
-                TerrainTiles.Clear();
-                EmitSignal(SignalName.SettingsChanged);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Backing field for <see cref="StoneLevel"/>.
-    /// </summary>
-    private float _stoneLevel = 1f;
-
-    /// <summary>
-    /// Noise threshold for stone terrain.
-    /// Noise values between GrassLevel and StoneLevel will be considered stone.
-    /// </summary>
-    [Export]
-    public float StoneLevel
-    {
-        get => _stoneLevel;
-        set
-        {
-            if (_stoneLevel != value)
-            {
-                _stoneLevel = value;
-                TerrainTiles.Clear();
-                EmitSignal(SignalName.SettingsChanged);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the World class and loads the noise resource.
+    /// Initializes a new instance of the World class and loads the island configuration resource.
     /// </summary>
     public World()
     {
-        Noise = GD.Load<Common.Extended.FastNoiseExt>("res://Assets/Resources/island_generating_noise.tres");
-        Noise.Changed += () => // Reload terrain tiles when noise settings change
+        IslandConfig = GD.Load<Island.IslandSeedConf>("res://Assets/Resources/island_seed_config.tres");
+        IslandConfig.Seed = Utils.RNG.Instance.Int();
+        IslandConfig.Changed += () =>
         {
+            _islandSeeds.Clear();
             TerrainTiles.Clear();
-            EmitSignal(SignalName.SettingsChanged);
+            EmitSignal(SignalName.Changed);
         };
     }
 
     /// <summary>
     /// Gets the terrain tile at the specified position.
-    /// If the tile does not exist, it is generated based on the noise function and thresholds.
+    /// If the tile does not exist, it is generated based on the island seeds and their masks.
     /// </summary>
     /// <param name="position">The position to get the terrain tile for</param>
     /// <returns>The terrain tile at the specified position</returns>
@@ -147,19 +51,30 @@ public partial class World : Resource
     {
         if (!TerrainTiles.ContainsKey(position))
         {
-            float n = Noise.GetNoise2Dv(position);
-                string type;
-            if (n < WaterLevel)
-                type = "Water";
-            else if (n < SandLevel)
-                type = "Sand";
-            else if (n < GrassLevel)
-                type = "Grass";
-            else if (n < StoneLevel)
-                type = "Stone";
+            Vector2I islandCell = new Vector2I(Mathf.FloorToInt(position.X / IslandConfig.CellSize), Mathf.FloorToInt(position.Y / IslandConfig.CellSize));
+            float bestMask = float.NegativeInfinity;
+            Island.IslandSeed bestIsland = null;
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                for (int dy = -2; dy <= 2; dy++)
+                {
+                    Vector2I neighborCell = islandCell + new Vector2I(dx, dy);
+                    if (!_islandSeeds.ContainsKey(neighborCell))
+                        _islandSeeds[neighborCell] = Island.IslandSeed.CreateRandom(neighborCell, IslandConfig);
+                    float maskValue = _islandSeeds[neighborCell].Mask(position);
+                    if (maskValue > bestMask)
+                    {
+                        bestMask = maskValue;
+                        bestIsland = _islandSeeds[neighborCell];
+                    }
+                }
+            }
+            if (bestMask <= 0)
+            {
+                TerrainTiles[position] = new Terrain.TerrainTile("Water");
+            }
             else
-                type = "Stone";
-            TerrainTiles[position] = new Terrain.TerrainTile(type);
+                TerrainTiles[position] = new Terrain.TerrainTile(bestIsland.Biome(position));
         }
         return TerrainTiles[position];
     }
