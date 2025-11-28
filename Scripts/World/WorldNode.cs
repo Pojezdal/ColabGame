@@ -33,13 +33,13 @@ public partial class WorldNode : Node2D
     /// </summary>
     [Export]
     private int _chunkRetentionMargin = 1;
-    
+
     /// <summary>
     /// Number of tiles to set per frame when loading or unloading chunks.
     /// This is used to prevent lagging when loading and unloading chunks.
     /// </summary>
     [Export]
-    private int _batchSize = 128; 
+    private int _batchSize = 128;
 
     [Export]
     /// <summary>

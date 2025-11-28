@@ -1,0 +1,7 @@
+[gd_resource type="FastNoiseLite" script_class="FastNoiseExt" load_steps=2 format=3 uid="uid://mcrc74wq0sv0"]
+
+[ext_resource type="Script" uid="uid://dbcidaatcbqyw" path="res://Scripts/Common/Extended/FastNoiseExt.cs" id="1_ljhs0"]
+
+[resource]
+script = ExtResource("1_ljhs0")
+metadata/_custom_type_script = "uid://dbcidaatcbqyw"

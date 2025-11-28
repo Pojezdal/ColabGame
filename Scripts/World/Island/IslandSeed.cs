@@ -53,6 +53,21 @@ public partial class IslandSeed : Resource
     public Common.Extended.FastNoiseExt BiomeNoise { get; init; } = null;
 
     /// <summary>
+    /// Noise used to determine rain distribution on the island.
+    /// </summary>
+    public Common.Extended.FastNoiseExt RainNoise { get; init; } = null;
+
+    /// <summary>
+    /// Noise used to determine temperature distribution on the island.
+    /// </summary>
+    public Common.Extended.FastNoiseExt TemperatureNoise { get; init; } = null;
+
+    /// <summary>
+    /// Noise used to determine altitude distribution on the island.
+    /// </summary>
+    public Common.Extended.FastNoiseExt AltitudeNoise { get; init; } = null;
+
+    /// <summary>
     /// Dictionary mapping biome center points (offset positions) to biome types.
     /// </summary>
     public Dictionary<Vector2I, string> BiomePoints { get; private set; } = new();
@@ -97,7 +112,7 @@ public partial class IslandSeed : Resource
     /// <param name="radius">Radius of the island</param>
     /// <param name="shapeNoise">Noise used to shape the island</param>
     /// <param name="biomeNoise">Noise used to determine biome distribution on the island</param>
-    public IslandSeed(Utils.RNG rng, IslandSeedConf config, bool containsIsland, Vector2I cellPosition, Vector2I center, int radius, Common.Extended.FastNoiseExt shapeNoise, Common.Extended.FastNoiseExt biomeNoise)
+    public IslandSeed(Utils.RNG rng, IslandSeedConf config, bool containsIsland, Vector2I cellPosition, Vector2I center, int radius, Common.Extended.FastNoiseExt shapeNoise, Common.Extended.FastNoiseExt biomeNoise, Common.Extended.FastNoiseExt rainNoise, Common.Extended.FastNoiseExt temperatureNoise, Common.Extended.FastNoiseExt altitudeNoise)
     {
         _rng = rng;
         Config = config;
@@ -107,6 +122,9 @@ public partial class IslandSeed : Resource
         Radius = radius;
         ShapeNoise = shapeNoise;
         BiomeNoise = biomeNoise;
+        RainNoise = rainNoise;
+        TemperatureNoise = temperatureNoise;
+        AltitudeNoise = altitudeNoise;
         if (ContainsIsland)
             InitializeBiomePoints(Config.Biomes.ToList());
     }
@@ -153,6 +171,10 @@ public partial class IslandSeed : Resource
             Mathf.FloorToInt(BiomeNoise.GetNoise2D(offsetPos.Y, offsetPos.X) * Config.BiomeNoiseStrength)
         ) : new Vector2I(0, 0);
 
+        int rain = Mathf.RoundToInt(RainNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
+        int temperature = Mathf.RoundToInt(TemperatureNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
+        int altitude = Mathf.RoundToInt(AltitudeNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
+
         string closestBiome = "Grass";
         float closestDistance = float.MaxValue;
         foreach (var (biomePos, biome) in BiomePoints)
@@ -164,7 +186,25 @@ public partial class IslandSeed : Resource
                 closestBiome = biome;
             }
         }
-        return closestBiome;
+        return SubBiome(closestBiome, rain, temperature, altitude);
+    }
+
+    public string SubBiome(string biome, int rain, int temperature, int altitude)
+    {
+        string s = string.Concat(biome, rain, temperature, altitude);
+
+        Dictionary<string, string> sub_biomes = new Dictionary<string, string>
+        {
+            { "Water", "Water" },
+            { "Grass011", "Center" },
+            { "Stone", "Stone" },
+            { "Sand", "Sand" },
+            { "Center", "Center" }
+        };
+
+        if (sub_biomes.ContainsKey(s)) return sub_biomes[s];
+
+        return biome;
     }
 
     /// <summary>
@@ -205,6 +245,15 @@ public partial class IslandSeed : Resource
         var biomeNoise = config.BiomeNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
         biomeNoise.Seed = rng.Int();
 
+        var rainNoise = config.RainNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
+        rainNoise.Seed = rng.Int();
+
+        var temperatureNoise = config.TemperatureNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
+        temperatureNoise.Seed = rng.Int();
+
+        var elevationNoise = config.AltitudeNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
+        elevationNoise.Seed = rng.Int();
+
         return new IslandSeed(rng,
             config,
             containsIsland,
@@ -212,7 +261,10 @@ public partial class IslandSeed : Resource
             center,
             radius,
             shapeNoise,
-            biomeNoise
+            biomeNoise,
+            rainNoise,
+            temperatureNoise,
+            elevationNoise
         );
     }
 

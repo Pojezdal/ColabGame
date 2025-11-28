@@ -1,44 +1,49 @@
-[gd_scene load_steps=6 format=3 uid="uid://cadgcuidi8kx0"]
+[gd_scene load_steps=8 format=3 uid="uid://cadgcuidi8kx0"]
 
 [ext_resource type="Script" uid="uid://hcy4ta21tklg" path="res://Scripts/World/WorldNode.cs" id="1_t17jd"]
-[ext_resource type="Texture2D" uid="uid://diwyf1007fowh" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
+[ext_resource type="Texture2D" uid="uid://cs1432ixi0x6t" path="res://Assets/Sprites/Tiles/basic_tiles.png" id="2_7drjl"]
+[ext_resource type="Texture2D" uid="uid://71lxsy8ox51b" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
 [ext_resource type="Script" uid="uid://bruephe45gs1i" path="res://Scripts/World/WorldCamera.cs" id="3_q37me"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_olant"]
+texture = ExtResource("2_7drjl")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrain = 4
+0:1/0 = 0
+0:1/0/terrain_set = 0
+0:1/0/terrain = 0
+0:2/0 = 0
+0:2/0/terrain_set = 0
+0:2/0/terrain = 1
+0:3/0 = 0
+0:3/0/terrain_set = 0
+0:3/0/terrain = 3
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nn42t"]
 resource_name = "Terrain"
 texture = ExtResource("2_nn42t")
 texture_region_size = Vector2i(32, 32)
-0:0/next_alternative_id = 3
-0:0/0 = 0
-0:0/0/terrain_set = 0
-0:0/0/terrain = 0
 0:1/0 = 0
 0:1/0/terrain_set = 0
-0:1/0/terrain = 1
-0:2/0 = 0
-0:2/0/terrain_set = 0
-0:2/0/terrain = 2
-0:3/0 = 0
-0:3/0/terrain_set = 0
-0:3/0/terrain = 3
-0:4/0 = 0
-0:4/0/terrain_set = 0
-0:4/0/terrain = 4
+0:1/0/terrain = 2
 
 [sub_resource type="TileSet" id="TileSet_7drjl"]
 tile_size = Vector2i(32, 32)
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Grass"
-terrain_set_0/terrain_0/color = Color(0, 0.5019608, 0.02215684, 1)
-terrain_set_0/terrain_1/name = "Water"
-terrain_set_0/terrain_1/color = Color(0.30314592, 0.6252487, 0.92941177, 1)
-terrain_set_0/terrain_2/name = "Sand"
-terrain_set_0/terrain_2/color = Color(0.7734375, 0.48798457, 0.22721745, 1)
+terrain_set_0/terrain_0/color = Color(0.19548088, 0.41815996, 0.1916998, 1)
+terrain_set_0/terrain_1/name = "Sand"
+terrain_set_0/terrain_1/color = Color(0.64344865, 0.62721235, 0.10520681, 1)
+terrain_set_0/terrain_2/name = "Water"
+terrain_set_0/terrain_2/color = Color(0.47058824, 0.5019608, 1, 1)
 terrain_set_0/terrain_3/name = "Stone"
-terrain_set_0/terrain_3/color = Color(0.3776042, 0.3694663, 0.367576, 1)
+terrain_set_0/terrain_3/color = Color(0.35357434, 0.41377383, 0.42626852, 1)
 terrain_set_0/terrain_4/name = "Center"
-terrain_set_0/terrain_4/color = Color(0.4898492, 0.0022005176, 0, 1)
+terrain_set_0/terrain_4/color = Color(0.28125, 0.5, 0.25, 1)
 sources/1 = SubResource("TileSetAtlasSource_nn42t")
+sources/0 = SubResource("TileSetAtlasSource_olant")
 
 [node name="WorldNode" type="Node2D"]
 script = ExtResource("1_t17jd")

@@ -73,6 +73,21 @@ public partial class IslandSeedConf : Resource
     private Common.Extended.FastNoiseExt _biomeNoise;
 
     /// <summary>
+    /// Backing field for <see cref="BiomeNoise"/>.
+    /// </summary>
+    private Common.Extended.FastNoiseExt _rainNoise;
+
+    /// <summary>
+    /// Backing field for <see cref="BiomeNoise"/>.
+    /// </summary>
+    private Common.Extended.FastNoiseExt _temperatureNoise;
+
+    /// <summary>
+    /// Backing field for <see cref="BiomeNoise"/>.
+    /// </summary>
+    private Common.Extended.FastNoiseExt _altitudeNoise;
+
+    /// <summary>
     /// Backing field for <see cref="BiomeNoiseStrength"/>.
     /// </summary>
     private float _biomeNoiseStrength = 10f;
@@ -97,7 +112,7 @@ public partial class IslandSeedConf : Resource
     /// </summary>
     private bool _showBiomeCenters = true;
 
-    
+
     /// <summary>
     /// Random seed for island generation.
     /// Changing this will regenerate all islands.
@@ -163,7 +178,7 @@ public partial class IslandSeedConf : Resource
             EmitSignal(SignalName.Changed);
         }
     }
-    
+
     /// <summary>
     /// Maximum radius of an island.
     /// </summary>
@@ -385,6 +400,60 @@ public partial class IslandSeedConf : Resource
         {
             if (_showBiomeCenters == value) return;
             _showBiomeCenters = value;
+            EmitSignal(SignalName.Changed);
+        }
+    }
+
+    /// <summary>
+    /// Rain noise generator for rain variation.
+    /// Can be configured for different noise types and parameters.
+    /// </summary>
+    [ExportGroup("Rain")]
+    [Export]
+    public Common.Extended.FastNoiseExt RainNoise
+    {
+        get => _rainNoise;
+        set
+        {
+            if (ReferenceEquals(_rainNoise, value)) return;
+            _rainNoise = value;
+            _rainNoise.Changed += () => EmitSignal(SignalName.Changed);
+            EmitSignal(SignalName.Changed);
+        }
+    }
+
+    /// <summary>
+    /// Temperature noise generator for temperature variation.
+    /// Can be configured for different noise types and parameters.
+    /// </summary>
+    [ExportGroup("Temperature")]
+    [Export]
+    public Common.Extended.FastNoiseExt TemperatureNoise
+    {
+        get => _rainNoise;
+        set
+        {
+            if (ReferenceEquals(_temperatureNoise, value)) return;
+            _temperatureNoise = value;
+            _temperatureNoise.Changed += () => EmitSignal(SignalName.Changed);
+            EmitSignal(SignalName.Changed);
+        }
+    }
+
+    /// <summary>
+    /// Altitude noise generator for altitude variation.
+    /// Can be configured for different noise types and parameters.
+    /// </summary>
+    [ExportGroup("Altitude")]
+    [Export]
+    public Common.Extended.FastNoiseExt AltitudeNoise
+    {
+        get => _altitudeNoise;
+        set
+        {
+            if (ReferenceEquals(_altitudeNoise, value)) return;
+            _altitudeNoise = value;
+            _altitudeNoise.Changed += () => EmitSignal(SignalName.Changed);
             EmitSignal(SignalName.Changed);
         }
     }
