@@ -68,6 +68,11 @@ public partial class IslandSeed : Resource
     public Common.Extended.FastNoiseExt AltitudeNoise { get; init; } = null;
 
     /// <summary>
+    /// Noise used to determine rivers on the island.
+    /// </summary>
+    public FastNoiseLite RiverNoise { get; init; } = null;
+
+    /// <summary>
     /// Dictionary mapping biome center points (offset positions) to biome types.
     /// </summary>
     public Dictionary<Vector2I, string> BiomePoints { get; private set; } = new();
@@ -115,7 +120,8 @@ public partial class IslandSeed : Resource
     /// <param name="rainNoise">Noise used to determine rain distribution on the island</param>
     /// <param name="temperatureNoise">Noise used to determine temperature distribution on the island</param>
     /// <param name="altitudeNoise">Noise used to determine altitude distribution on the island</param>
-    public IslandSeed(Utils.RNG rng, IslandSeedConf config, bool containsIsland, Vector2I cellPosition, Vector2I center, int radius, Common.Extended.FastNoiseExt shapeNoise, Common.Extended.FastNoiseExt biomeNoise, Common.Extended.FastNoiseExt rainNoise, Common.Extended.FastNoiseExt temperatureNoise, Common.Extended.FastNoiseExt altitudeNoise)
+    /// <param name="riverNoise">Noise used to determine altitude distribution on the island</param>
+    public IslandSeed(Utils.RNG rng, IslandSeedConf config, bool containsIsland, Vector2I cellPosition, Vector2I center, int radius, Common.Extended.FastNoiseExt shapeNoise, Common.Extended.FastNoiseExt biomeNoise, Common.Extended.FastNoiseExt rainNoise, Common.Extended.FastNoiseExt temperatureNoise, Common.Extended.FastNoiseExt altitudeNoise, FastNoiseLite riverNoise)
     {
         _rng = rng;
         Config = config;
@@ -128,6 +134,7 @@ public partial class IslandSeed : Resource
         RainNoise = rainNoise;
         TemperatureNoise = temperatureNoise;
         AltitudeNoise = altitudeNoise;
+        RiverNoise = riverNoise;
         if (ContainsIsland)
             InitializeBiomePoints(Config.Biomes.ToList());
     }
@@ -201,8 +208,10 @@ public partial class IslandSeed : Resource
         int rain = Mathf.RoundToInt(RainNoise.GetNoise2D(position.X, position.Y));
         int temperature = Mathf.RoundToInt(TemperatureNoise.GetNoise2D(position.X, position.Y));
 
-        string env = string.Concat(biome, altitude, rain, temperature);
-            
+        int river = RiverNoise.GetNoise2D(position.X, position.Y) > 0.8 ? 1 : 0;
+
+        string env = string.Concat(biome, altitude, rain, temperature, river);
+
         return Config.SubBiomes.GetValueOrDefault(env, biome);
     }
 
@@ -250,8 +259,11 @@ public partial class IslandSeed : Resource
         var temperatureNoise = config.TemperatureNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
         temperatureNoise.Seed = rng.Int();
 
-        var elevationNoise = config.AltitudeNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
-        elevationNoise.Seed = rng.Int();
+        var altitudeNoise = config.AltitudeNoise.Duplicate(true) as Common.Extended.FastNoiseExt;
+        altitudeNoise.Seed = rng.Int();
+
+        var riverNoise = config.RiverNoise.Duplicate(true) as FastNoiseLite;
+        altitudeNoise.Seed = rng.Int();
 
         return new IslandSeed(rng,
             config,
@@ -263,7 +275,8 @@ public partial class IslandSeed : Resource
             biomeNoise,
             rainNoise,
             temperatureNoise,
-            elevationNoise
+            altitudeNoise,
+            riverNoise
         );
     }
 

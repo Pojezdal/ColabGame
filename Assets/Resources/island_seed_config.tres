@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="IslandSeedConf" load_steps=7 format=3 uid="uid://dmhva26rw1tl8"]
+[gd_resource type="Resource" script_class="IslandSeedConf" load_steps=8 format=3 uid="uid://dmhva26rw1tl8"]
 
 [ext_resource type="FastNoiseLite" uid="uid://mp8y6nk7f1lh" path="res://Assets/Resources/Noise/island_biome_noise.tres" id="1_elpkh"]
 [ext_resource type="FastNoiseLite" uid="uid://cl6p0vv84nms" path="res://Assets/Resources/Noise/island_altitude_noise.tres" id="1_mr4es"]
 [ext_resource type="Script" uid="uid://clmwpmgk3ui7n" path="res://Scripts/World/Island/IslandSeedConf.cs" id="1_tuwt5"]
 [ext_resource type="FastNoiseLite" uid="uid://bsx303b053u6t" path="res://Assets/Resources/Noise/island_shape_noise.tres" id="2_4rg4g"]
 [ext_resource type="FastNoiseLite" uid="uid://mcrc74wq0sv0" path="res://Assets/Resources/Noise/island_rain_noise.tres" id="2_lbg53"]
+[ext_resource type="FastNoiseLite" uid="uid://do5mbpa7bwx66" path="res://Assets/Resources/Noise/river_noise.tres" id="4_n7vtq"]
 [ext_resource type="FastNoiseLite" uid="uid://bksl4obafdkye" path="res://Assets/Resources/Noise/island_temperature_noise.tres" id="5_n7vtq"]
 
 [resource]
@@ -14,4 +15,5 @@ BiomeNoise = ExtResource("1_elpkh")
 RainNoise = ExtResource("2_lbg53")
 TemperatureNoise = ExtResource("5_n7vtq")
 AltitudeNoise = ExtResource("1_mr4es")
+RiverNoise = ExtResource("4_n7vtq")
 metadata/_custom_type_script = "uid://clmwpmgk3ui7n"

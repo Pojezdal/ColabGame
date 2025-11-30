@@ -88,6 +88,11 @@ public partial class IslandSeedConf : Resource
     private Common.Extended.FastNoiseExt _altitudeNoise;
 
     /// <summary>
+    /// Backing field for <see cref="RiverNoise"/>.
+    /// </summary>
+    private FastNoiseLite _riverNoise;
+
+    /// <summary>
     /// Backing field for <see cref="BiomeNoiseStrength"/>.
     /// </summary>
     private float _biomeNoiseStrength = 10f;
@@ -117,8 +122,16 @@ public partial class IslandSeedConf : Resource
     /// </summary>
     private Godot.Collections.Dictionary<string, string> _subBiomes = new()
     {
+        { "Grass0001", "Water"},
+        { "Grass0011", "Water"},
+        { "Grass0101", "Water"},
+        { "Grass0111", "Water"},
+        { "Grass1001", "Water"},
+        { "Grass1011", "Water"},
+        { "Grass1101", "Water"},
+        { "Grass1111", "Water"},
         { "Water", "Water" },
-        { "Grass101", "Center" },
+        { "Grass1010", "Center" },
         { "Stone", "Stone" },
         { "Sand", "Sand" },
         { "Center", "Center" }
@@ -465,6 +478,24 @@ public partial class IslandSeedConf : Resource
             if (ReferenceEquals(_altitudeNoise, value)) return;
             _altitudeNoise = value;
             _altitudeNoise.Changed += () => EmitSignal(SignalName.Changed);
+            EmitSignal(SignalName.Changed);
+        }
+    }
+
+    /// <summary>
+    /// River noise generator for rivers.
+    /// Can be configured for different noise types and parameters.
+    /// </summary>
+    [ExportGroup("River")]
+    [Export]
+    public FastNoiseLite RiverNoise
+    {
+        get => _riverNoise;
+        set
+        {
+            if (ReferenceEquals(_riverNoise, value)) return;
+            _riverNoise = value;
+            _riverNoise.Changed += () => EmitSignal(SignalName.Changed);
             EmitSignal(SignalName.Changed);
         }
     }

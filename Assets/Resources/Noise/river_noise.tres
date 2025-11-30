@@ -1,0 +1,9 @@
+[gd_resource type="FastNoiseLite" format=3 uid="uid://do5mbpa7bwx66"]
+
+[resource]
+offset = Vector3(0, 366.97, 0)
+fractal_type = 3
+fractal_lacunarity = 10.0
+fractal_gain = 0.01
+fractal_weighted_strength = 0.5
+metadata/_preview_in_3d_space_ = true

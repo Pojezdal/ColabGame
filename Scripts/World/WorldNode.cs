@@ -88,8 +88,13 @@ public partial class WorldNode : Node2D
     /// <param name="data">The world data to initialize the node with</param>
     public void Init(World data)
     {
+        var timer = GetNode<Timer>("DebounceTimer");
         Data = data;
         Data.Changed += () =>
+        {
+            timer.Start();
+        };
+        timer.Timeout += () =>
         {
             UnloadAllChunks();
             UpdateChunks(_lastCenterChunk);
