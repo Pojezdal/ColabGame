@@ -112,6 +112,9 @@ public partial class IslandSeed : Resource
     /// <param name="radius">Radius of the island</param>
     /// <param name="shapeNoise">Noise used to shape the island</param>
     /// <param name="biomeNoise">Noise used to determine biome distribution on the island</param>
+    /// <param name="rainNoise">Noise used to determine rain distribution on the island</param>
+    /// <param name="temperatureNoise">Noise used to determine temperature distribution on the island</param>
+    /// <param name="altitudeNoise">Noise used to determine altitude distribution on the island</param>
     public IslandSeed(Utils.RNG rng, IslandSeedConf config, bool containsIsland, Vector2I cellPosition, Vector2I center, int radius, Common.Extended.FastNoiseExt shapeNoise, Common.Extended.FastNoiseExt biomeNoise, Common.Extended.FastNoiseExt rainNoise, Common.Extended.FastNoiseExt temperatureNoise, Common.Extended.FastNoiseExt altitudeNoise)
     {
         _rng = rng;
@@ -171,9 +174,6 @@ public partial class IslandSeed : Resource
             Mathf.FloorToInt(BiomeNoise.GetNoise2D(offsetPos.Y, offsetPos.X) * Config.BiomeNoiseStrength)
         ) : new Vector2I(0, 0);
 
-        int rain = Mathf.RoundToInt(RainNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
-        int temperature = Mathf.RoundToInt(TemperatureNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
-        int altitude = Mathf.RoundToInt(AltitudeNoise.GetNoise2D(offsetPos.X, offsetPos.Y));
 
         string closestBiome = "Grass";
         float closestDistance = float.MaxValue;
@@ -186,25 +186,24 @@ public partial class IslandSeed : Resource
                 closestBiome = biome;
             }
         }
-        return SubBiome(closestBiome, rain, temperature, altitude);
+        return SubBiome(position, closestBiome);
     }
 
-    public string SubBiome(string biome, int rain, int temperature, int altitude)
+    /// <summary>
+    /// Determines the sub-biome type at a given world position based on altitude, rain, and temperature.
+    /// </summary>
+    /// <param name="position">The world position</param>
+    /// <param name="biome">The main biome type</param>
+    /// <returns>The sub-biome type</returns>
+    public string SubBiome(Vector2I position, string biome)
     {
-        string s = string.Concat(biome, rain, temperature, altitude);
+        int altitude = Mathf.RoundToInt(AltitudeNoise.GetNoise2D(position.X, position.Y));
+        int rain = Mathf.RoundToInt(RainNoise.GetNoise2D(position.X, position.Y));
+        int temperature = Mathf.RoundToInt(TemperatureNoise.GetNoise2D(position.X, position.Y));
 
-        Dictionary<string, string> sub_biomes = new Dictionary<string, string>
-        {
-            { "Water", "Water" },
-            { "Grass011", "Center" },
-            { "Stone", "Stone" },
-            { "Sand", "Sand" },
-            { "Center", "Center" }
-        };
-
-        if (sub_biomes.ContainsKey(s)) return sub_biomes[s];
-
-        return biome;
+        string env = string.Concat(biome, altitude, rain, temperature);
+            
+        return Config.SubBiomes.GetValueOrDefault(env, biome);
     }
 
     /// <summary>

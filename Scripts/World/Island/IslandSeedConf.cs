@@ -73,17 +73,17 @@ public partial class IslandSeedConf : Resource
     private Common.Extended.FastNoiseExt _biomeNoise;
 
     /// <summary>
-    /// Backing field for <see cref="BiomeNoise"/>.
+    /// Backing field for <see cref="RainNoise"/>.
     /// </summary>
     private Common.Extended.FastNoiseExt _rainNoise;
 
     /// <summary>
-    /// Backing field for <see cref="BiomeNoise"/>.
+    /// Backing field for <see cref="TemperatureNoise"/>.
     /// </summary>
     private Common.Extended.FastNoiseExt _temperatureNoise;
 
     /// <summary>
-    /// Backing field for <see cref="BiomeNoise"/>.
+    /// Backing field for <see cref="AltitudeNoise"/>.
     /// </summary>
     private Common.Extended.FastNoiseExt _altitudeNoise;
 
@@ -112,6 +112,17 @@ public partial class IslandSeedConf : Resource
     /// </summary>
     private bool _showBiomeCenters = true;
 
+    /// <summary>
+    /// Backing field for <see cref="SubBiomes"/>.
+    /// </summary>
+    private Godot.Collections.Dictionary<string, string> _subBiomes = new()
+    {
+        { "Water", "Water" },
+        { "Grass101", "Center" },
+        { "Stone", "Stone" },
+        { "Sand", "Sand" },
+        { "Center", "Center" }
+    };
 
     /// <summary>
     /// Random seed for island generation.
@@ -454,6 +465,23 @@ public partial class IslandSeedConf : Resource
             if (ReferenceEquals(_altitudeNoise, value)) return;
             _altitudeNoise = value;
             _altitudeNoise.Changed += () => EmitSignal(SignalName.Changed);
+            EmitSignal(SignalName.Changed);
+        }
+    }
+
+    /// <summary>
+    /// Dictionary mapping biome environment keys to sub-biome types.
+    /// Used to determine specific sub-biome based on combined environmental factors.
+    /// </summary>
+    [ExportGroup("Biome")]
+    [Export]
+    public Godot.Collections.Dictionary<string, string> SubBiomes
+    {
+        get => _subBiomes;
+        set
+        {
+            if (ReferenceEquals(_subBiomes, value)) return;
+            _subBiomes = value;
             EmitSignal(SignalName.Changed);
         }
     }
