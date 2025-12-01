@@ -1,6 +1,12 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
-public partial class Carrot : Node
+namespace Entity;
+
+public partial class Carrot : Plant
 {
+    public Carrot(string id) : base(id, new() { new("nutrients", 30.0f) })
+    {
+    }
 }
