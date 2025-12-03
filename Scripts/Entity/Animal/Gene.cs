@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-namespace Entity.LivingEntity;
+namespace Entity.Animal;
 
 /// <summary>
 /// Represents a gene of a living entity.

@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-namespace Entity.LivingEntity;
+namespace Entity.Animal;
 
 /// <summary>
 /// Represents a trait of a living entity.

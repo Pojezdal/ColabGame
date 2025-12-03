@@ -2,12 +2,12 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-namespace Entity.LivingEntity.Animal;
+namespace Entity.Animal;
 
 /// <summary>
 /// Represents a rabbit.
 /// </summary>
-public partial class Rabbit : LivingEntity
+public partial class Rabbit : Animal
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Rabbit"/> class.
@@ -39,5 +39,14 @@ public partial class Rabbit : LivingEntity
             }),
         })
     {
+    }
+
+    /// <summary>
+    /// Creates and returns a new EntityNode associated with this rabbit.
+    /// </summary>
+    /// <returns>A new EntityNode instance associated with this rabbit.</returns>
+    public override EntityNode CreateNode()
+    {
+        throw new NotImplementedException();
     }
 }

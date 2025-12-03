@@ -11,6 +11,12 @@ namespace World;
 public partial class World : Resource
 {
     /// <summary>
+    /// Signal emitted when an entity is added to the world at a specific position.
+    /// </summary>
+    [Signal]
+    public delegate void EntityAddedEventHandler(Entity.Entity entuty, Vector2I position);
+
+    /// <summary>
     /// Configuration for island generation in the world.
     /// </summary>
     [Export]
@@ -71,11 +77,39 @@ public partial class World : Resource
             }
             if (bestMask <= 0)
             {
-                TerrainTiles[position] = new Terrain.TerrainTile("Water");
+                TerrainTiles[position] = new Terrain.TerrainTile("Water", position);
             }
             else
-                TerrainTiles[position] = new Terrain.TerrainTile(bestIsland.Biome(position));
+                TerrainTiles[position] = new Terrain.TerrainTile(bestIsland.Biome(position), position);
+
+            TerrainTiles[position].EntityAdded += (Entity.Entity newEntity) =>
+            {
+                EmitSignal(SignalName.EntityAdded, newEntity, position);
+            };
         }
         return TerrainTiles[position];
+    }
+
+    /// <summary>
+    /// Gets all terrain tiles within a specified radius from a given position.
+    /// </summary>
+    /// <param name="position">The center position</param>
+    /// <param name="radius">The radius to search within</param>
+    /// <returns>A list of terrain tiles within the specified radius</returns>
+    public List<Terrain.TerrainTile> GetTilesInRadius(Vector2I position, int radius)
+    {
+        List<Terrain.TerrainTile> tiles = new();
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                Vector2I checkPos = position + new Vector2I(dx, dy);
+                if (checkPos.DistanceTo(position) <= radius)
+                {
+                    tiles.Add(GetTileAt(checkPos));
+                }
+            }
+        }
+        return tiles;
     }
 }

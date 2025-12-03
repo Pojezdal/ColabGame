@@ -2,13 +2,13 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-namespace Entity.LivingEntity;
+namespace Entity.Animal;
 
 /// <summary>
 /// Base class for all living entities in the world.
 /// These can interact with their environment and other entities in more complex ways and can reproduce.
 /// </summary>
-public partial class LivingEntity : Entity
+public abstract partial class Animal : Entity
 {
     /// <summary>
     /// The genes of this living entity.
@@ -29,7 +29,7 @@ public partial class LivingEntity : Entity
     /// <param name="properties">The initial properties of the living entity.</param>
     /// <param name="genes">The initial genes of the living entity.</param>
     /// <param name="traits">The initial traits of the living entity.</param>
-    public LivingEntity(string id, List<Property> properties, List<Gene> genes, List<Trait> traits) : base(id, properties)
+    public Animal(string id, IEnumerable<Property> properties, IEnumerable<Gene> genes, IEnumerable<Trait> traits) : base(id, properties)
     {
         foreach (var gene in genes)
         {

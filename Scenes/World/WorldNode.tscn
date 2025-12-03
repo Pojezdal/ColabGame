@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cadgcuidi8kx0"]
+[gd_scene load_steps=9 format=3 uid="uid://cadgcuidi8kx0"]
 
 [ext_resource type="Script" uid="uid://hcy4ta21tklg" path="res://Scripts/World/WorldNode.cs" id="1_t17jd"]
 [ext_resource type="Texture2D" uid="uid://cs1432ixi0x6t" path="res://Assets/Sprites/Tiles/basic_tiles.png" id="2_7drjl"]
-[ext_resource type="Texture2D" uid="uid://71lxsy8ox51b" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
+[ext_resource type="Texture2D" uid="uid://diwyf1007fowh" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
 [ext_resource type="Script" uid="uid://bruephe45gs1i" path="res://Scripts/World/WorldCamera.cs" id="3_q37me"]
+[ext_resource type="PackedScene" uid="uid://c8fddrkf4us0k" path="res://Scenes/Entity/Plant/PlantSpawner.tscn" id="4_olant"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_olant"]
 texture = ExtResource("2_7drjl")
@@ -54,6 +55,12 @@ _batchSize = 4096
 
 [node name="TerrainLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_7drjl")
+
+[node name="Entities" type="Node2D" parent="."]
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="PlantSpawner" parent="Spawners" instance=ExtResource("4_olant")]
 
 [node name="WorldCamera" type="Camera2D" parent="."]
 limit_enabled = false

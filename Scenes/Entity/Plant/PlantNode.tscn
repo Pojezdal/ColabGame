@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://ca2d3t74hc6py"]
+
+[ext_resource type="PackedScene" uid="uid://by4u08e1ixafs" path="res://Scenes/Entity/EntityNode.tscn" id="1_v7btk"]
+[ext_resource type="Script" uid="uid://s0haxiu1tbmn" path="res://Scripts/Entity/Plant/PlantNode.cs" id="2_1vf51"]
+
+[node name="PlantNode" instance=ExtResource("1_v7btk")]
+script = ExtResource("2_1vf51")

@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8fddrkf4us0k"]
+
+[ext_resource type="PackedScene" uid="uid://s863juxvsbfx" path="res://Scenes/Entity/EntitySpawner.tscn" id="1_a5c25"]
+[ext_resource type="Script" uid="uid://llh1raajajuy" path="res://Scripts/Entity/Plant/PlantSpawner.cs" id="2_ahwvt"]
+
+[node name="PlantSpawner" instance=ExtResource("1_a5c25")]
+script = ExtResource("2_ahwvt")

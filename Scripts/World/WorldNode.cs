@@ -94,6 +94,7 @@ public partial class WorldNode : Node2D
         {
             timer.Start();
         };
+        Data.EntityAdded += SpawnEntity;
         timer.Timeout += () =>
         {
             UnloadAllChunks();
@@ -108,6 +109,8 @@ public partial class WorldNode : Node2D
 
         // Initial chunk update and subscribe to settings change to update chunks if the world changes
         UpdateChunks(Vector2I.Zero);
+
+        GetNode<Entity.Plant.PlantSpawner>("Spawners/PlantSpawner").Init(Data);
     }
 
     /// <summary>
@@ -129,6 +132,25 @@ public partial class WorldNode : Node2D
     public override void _Ready()
     {
         Init(new World());
+        GetNode<Entity.Plant.PlantSpawner>("Spawners/PlantSpawner").SpawnCarrot(new Vector2I(0, 0), 40);
+    }
+
+    /// <summary>
+    /// Spawns an entity at the specified position in the world.
+    /// </summary>
+    /// <param name="entity">The entity to spawn</param>
+    /// <param name="position">The position to spawn the entity at (in tile coordinates)</param>
+    private void SpawnEntity(Entity.Entity entity, Vector2I position)
+    {
+        if (entity == null)
+            return;
+        var entityNode = entity.CreateNode();
+
+        if (entityNode != null)
+        {
+            entityNode.Position = position * _tileSize + _tileSize / 2;
+            GetNode<Node2D>("Entities").AddChild(entityNode);
+        }
     }
 
     /// <summary>
