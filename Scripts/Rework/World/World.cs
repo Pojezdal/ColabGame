@@ -67,5 +67,38 @@ public partial class World : RefCounted
                 Tiles[pos] = new Tile(pos, biome, new() { { "height", height }, { "moisture", moisture } });
             }
         }
+
+        GenerateRiver(_center);
+    }
+
+    /// <summary>
+    /// Generates a river starting from the given position, the river flows downhill until it reaches the ocean.
+    /// </summary>
+    /// <param name="start">The starting position of the river.</param>
+    private void GenerateRiver(Vector2I start)
+    {
+        PriorityQueue<Tile, float> possibleSpills = new();
+        HashSet<Vector2I> river = new();
+        possibleSpills.Enqueue(Tiles[start], 0f);
+
+        while (true)
+        {
+            var current = possibleSpills.Dequeue();
+            if (current.Biome.Name == "Ocean")
+                break;
+            if (river.Contains(current.Position))
+                continue;
+
+            current.UpdateBiome(new Biome.Biome("River"));
+            river.Add(current.Position);
+            if (!river.Contains(current.Position + Vector2I.Up))
+                possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Up], Tiles[current.Position + Vector2I.Up].NoiseValues["height"]);
+            if (!river.Contains(current.Position + Vector2I.Down))
+                possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Down], Tiles[current.Position + Vector2I.Down].NoiseValues["height"]);
+            if (!river.Contains(current.Position + Vector2I.Left))
+                possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Left], Tiles[current.Position + Vector2I.Left].NoiseValues["height"]);
+            if (!river.Contains(current.Position + Vector2I.Right))
+                possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Right], Tiles[current.Position + Vector2I.Right].NoiseValues["height"]);
+        }
     }
 }

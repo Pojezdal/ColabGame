@@ -16,7 +16,7 @@ public partial class Tile : RefCounted
     /// <summary>
     /// The biome of the tile.
     /// </summary>
-    public Biome.Biome Biome { get; init; }
+    public Biome.Biome Biome { get; private set; }
 
     /// <summary>
     /// The sub-biome of the tile.
@@ -39,5 +39,14 @@ public partial class Tile : RefCounted
         Position = position;
         Biome = biome;
         NoiseValues = noiseValues;
+    }
+
+    /// <summary>
+    /// Updates the biome of the tile.
+    /// </summary>
+    /// <param name="newBiome">The new biome to assign to the tile.</param
+    public void UpdateBiome(Biome.Biome newBiome)
+    {
+        Biome = newBiome;
     }
 }
