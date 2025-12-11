@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ColabGame"
-run/main_scene="uid://cadgcuidi8kx0"
+run/main_scene="uid://iee4pspmsrxx"
 config/features=PackedStringArray("4.5", "C#", "Mobile")
 config/icon="res://icon.svg"
 

@@ -26,9 +26,13 @@ public class RNG
     /// <summary>
     /// Initializes a new instance of the RNG class and randomizes the internal state.
     /// </summary>
-    public RNG()
+    /// <param name="seed">Optional seed value to initialize the RNG. If null, the RNG is randomized.</param>
+    public RNG(ulong? seed = null)
     {
-        _gdRng.Randomize();
+        if (seed.HasValue)
+            Seed(seed.Value);
+        else
+            _gdRng.Randomize();
     }
 
     /// <summary>
