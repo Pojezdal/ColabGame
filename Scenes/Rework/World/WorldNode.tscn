@@ -66,7 +66,11 @@ SeedData = SubResource("Resource_873j4")
 [node name="WorldLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_j0p0s")
 
-[node name="OverlayLayer" type="TileMapLayer" parent="."]
+[node name="OverlayLayerHM" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_0h01y")
+
+[node name="OverlayLayerTF" type="TileMapLayer" parent="."]
+visible = false
 tile_set = SubResource("TileSet_0h01y")
 
 [node name="WorldCamera" type="Camera2D" parent="."]

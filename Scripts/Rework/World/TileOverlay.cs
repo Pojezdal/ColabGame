@@ -14,9 +14,13 @@ public partial class TileOverlay : Node2D
     /// Initializes the overlay with the given tile data.
     /// </summary>
     /// <param name="tile">The tile data to display.</param>
-    public void Init(Tile tile)
+    /// <param name="info">The type of information to display ("HM" for height/moisture, "TF" for temperature/fertility).</param>
+    public void Init(Tile tile, string info)
     {
         _data = tile;
-        GetNode<Label>("Label").Text = $"H:{tile.NoiseValues["height"]:0.##}\nM:{tile.NoiseValues["moisture"]:0.##}";
+        if (info == "HM")
+            GetNode<Label>("Label").Text = $"H:{tile.Properties["height"]:0.##}\nM:{tile.Properties["moisture"]:0.##}";
+        else if (info == "TF")
+            GetNode<Label>("Label").Text = $"T:{tile.Properties["temperature"]:0.##}\nF:{tile.Properties["fertility"]:0.##}";
     }
 }

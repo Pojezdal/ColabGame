@@ -62,9 +62,11 @@ public partial class World : RefCounted
                 float effectiveRadius = SeedData.IslandRadius * radiusVariation;
                 float mask = 1f - (distance / effectiveRadius);
 
-                height = (mask <= 0) ? -1f : height;
-                var biome = new Biome.Biome(SeedData.GetBiome(height, moisture));
-                Tiles[pos] = new Tile(pos, biome, new() { { "height", height }, { "moisture", moisture } });
+                // Apply island mask to height, negative changes the height to below sea level
+                height = (mask <= 0) ? Mathf.Max(mask, -1) : height;
+
+                var biome = Biome.BiomeDatabase.Get(SeedData.GetBiome(height, moisture, out var norms));
+                Tiles[pos] = new Tile(pos, biome, new() { { "height", height }, { "moisture", moisture } }, norms);
             }
         }
 
@@ -89,7 +91,7 @@ public partial class World : RefCounted
             if (river.Contains(current.Position))
                 continue;
 
-            current.UpdateBiome(new Biome.Biome("River"));
+            current.UpdateBiome(Biome.BiomeDatabase.Get("River"));
             river.Add(current.Position);
             if (!river.Contains(current.Position + Vector2I.Up))
                 possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Up], Tiles[current.Position + Vector2I.Up].NoiseValues["height"]);

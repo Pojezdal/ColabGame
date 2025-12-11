@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Rework.World;
@@ -62,6 +64,7 @@ public partial class WorldSeed : Resource
     /// </summary>
     public float[] HeightThresholds { get; private set; } =
     {
+        -1, // Padding (don't change)
         0.0f,
         0.28f,
         0.7f,
@@ -73,6 +76,7 @@ public partial class WorldSeed : Resource
     /// </summary>
     public float[] MoistureThresholds { get; private set; } =
     {
+        0.0f, // Padding (don't change)
         0.25f,
         0.45f,
         0.75f,
@@ -84,10 +88,11 @@ public partial class WorldSeed : Resource
     /// </summary>
     public string[,] BiomeMap { get; private set; } =
     {
-        { "Ocean", "Ocean", "Ocean", "Ocean" },
-        { "Sand", "Sand", "Sand", "Sand" },
-        { "Grass", "Grass", "Grass", "Grass" },
-        { "Rock", "Rock", "Rock", "Rock" }
+        { "Pad", "Pad", "Pad", "Pad", "Pad" },
+        { "Pad", "Ocean", "Ocean", "Ocean", "Ocean" },
+        { "Pad", "Sand", "Sand", "Sand", "Sand" },
+        { "Pad", "Grass", "Grass", "Grass", "Grass" },
+        { "Pad", "Rock", "Rock", "Rock", "Rock" }
     };
 
     /// <summary>
@@ -95,15 +100,15 @@ public partial class WorldSeed : Resource
     /// </summary>
     /// <param name="value">The value to find the band for.</param>
     /// <param name="thresholds">The thresholds defining the bands.</param>
-    /// <returns>The index of the band the value falls into.</returns>
-    private int FindBand(float value, float[] thresholds)
+    /// <returns>A tuple containing the band index and the normalized value within that band.</returns>
+    private Tuple<int, float> FindBand(float value, float[] thresholds)
     {
         for (int i = 0; i < thresholds.Length; i++)
         {
             if (value < thresholds[i])
-                return i;
+                return Tuple.Create(i, Mathf.InverseLerp(thresholds[i - 1], thresholds[i], value));
         }
-        return thresholds.Length - 1;
+        return Tuple.Create(thresholds.Length - 1, 1f);
     }
     
     /// <summary>
@@ -111,11 +116,17 @@ public partial class WorldSeed : Resource
     /// </summary>
     /// <param name="height">The height value.</param>
     /// <param name="moisture">The moisture value.</param>
+    /// <param name="norms">Normalized values within their respective bands.</param>
     /// <returns>The name of the biome.</returns>
-    public string GetBiome(float height, float moisture)
+    public string GetBiome(float height, float moisture, out Dictionary<string, float> norms)
     {
-        int h = FindBand(height, HeightThresholds);
-        int m = FindBand(moisture, MoistureThresholds);
-        return BiomeMap[h, m];
+        var (hI, heightNorm) = FindBand(height, HeightThresholds);
+        var (mI, moistureNorm) = FindBand(moisture, MoistureThresholds);
+        norms = new Dictionary<string, float>
+        {
+            { "height", heightNorm },
+            { "moisture", moistureNorm }
+        };
+        return BiomeMap[hI, mI];
     }
 }

@@ -27,13 +27,22 @@ public partial class WorldNode : Node2D
     public void Init(World data)
     {
         var worldlayer = GetNode<TileMapLayer>("WorldLayer");
-        var overlaylayer = GetNode<TileMapLayer>("OverlayLayer");
-        overlaylayer.ChildEnteredTree += (Node child) =>
+        var overlaylayerHM = GetNode<TileMapLayer>("OverlayLayerHM");
+        overlaylayerHM.ChildEnteredTree += (Node child) =>
         {
             if (child is TileOverlay cell)
             {
-                var gridPosition = overlaylayer.LocalToMap(cell.Position);
-                cell.Init(data.Tiles[gridPosition]);
+                var gridPosition = overlaylayerHM.LocalToMap(cell.Position);
+                cell.Init(data.Tiles[gridPosition], "HM");
+            }
+        };
+        var overlaylayerTF = GetNode<TileMapLayer>("OverlayLayerTF");
+        overlaylayerTF.ChildEnteredTree += (Node child) =>
+        {
+            if (child is TileOverlay cell)
+            {
+                var gridPosition = overlaylayerTF.LocalToMap(cell.Position);
+                cell.Init(data.Tiles[gridPosition], "TF");
             }
         };
 
@@ -43,7 +52,8 @@ public partial class WorldNode : Node2D
         foreach (var tile in data.Tiles.Values)
         {
             worldlayer.SetCellsTerrainConnect([tile.Position], 0, _biomeToTerrainMap[tile.Biome.Name]);
-            overlaylayer.SetCell(tile.Position, 0, Vector2I.Zero, 1);
+            overlaylayerHM.SetCell(tile.Position, 0, Vector2I.Zero, 1);
+            overlaylayerTF.SetCell(tile.Position, 0, Vector2I.Zero, 1);
         }
     }
 
