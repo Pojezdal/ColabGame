@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=3 uid="uid://cadgcuidi8kx0"]
 
 [ext_resource type="Script" uid="uid://hcy4ta21tklg" path="res://Scripts/World/WorldNode.cs" id="1_t17jd"]
-[ext_resource type="Texture2D" uid="uid://71lxsy8ox51b" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
-[ext_resource type="Texture2D" uid="uid://cesey8qikq3ol" path="res://Assets/Sprites/Tiles/full_tile_set.png" id="3_olant"]
+[ext_resource type="Texture2D" uid="uid://diwyf1007fowh" path="res://Assets/Sprites/Tiles/terrain.png" id="2_nn42t"]
+[ext_resource type="Texture2D" uid="uid://c0vlc33u74rk7" path="res://Assets/Sprites/Tiles/full_tile_set.png" id="3_olant"]
 [ext_resource type="Script" uid="uid://bruephe45gs1i" path="res://Scripts/World/WorldCamera.cs" id="3_q37me"]
 [ext_resource type="PackedScene" uid="uid://c8fddrkf4us0k" path="res://Scenes/Entity/Plant/PlantSpawner.tscn" id="4_olant"]
 

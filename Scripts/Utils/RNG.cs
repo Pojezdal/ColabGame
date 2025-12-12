@@ -67,6 +67,13 @@ public class RNG
     }
 
     /// <summary>
+    /// Generates a random float within the specified range (inclusive).
+    /// </summary>
+    /// <param name="range">The range specifying the minimum and maximum values.</param>
+    /// <returns>A random float within the specified range.</returns>
+    public float Float(Common.Type.Range range) => Float(range.Min, range.Max);
+
+    /// <summary>
     /// Generates a random float following a Gaussian (normal) distribution with the specified mean and standard deviation.
     /// </summary>
     /// <param name="mean">The mean value of the distribution.</param>
@@ -76,6 +83,13 @@ public class RNG
     {
         return _gdRng.Randfn(mean, deviation);
     }
+
+    /// <summary>
+    /// Generates a random float following a Gaussian (normal) distribution within the specified range.
+    /// The mean is set to the midpoint of the range, and the standard deviation is set so that ~99.7% of values fall within the range.
+    /// </summary>
+    /// <param name="range">The range specifying the minimum and maximum values.</param>
+    public float FloatGaussian(Common.Type.Range range) => FloatGaussian((range.Min + range.Max) / 2f, (range.Max - range.Min) / 6f);
 
     /// <summary>
     /// Returns true with the specified probability.

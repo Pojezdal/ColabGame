@@ -103,4 +103,27 @@ public partial class World : RefCounted
                 possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Right], Tiles[current.Position + Vector2I.Right].NoiseValues["height"]);
         }
     }
+
+    /// <summary>
+    /// Retrieves all tiles within a specified radius from a given position.
+    /// </summary>
+    /// <param name="position">The center position to search from.</param>
+    /// <param name="radius">The radius within which to search for tiles.</param>
+    public List<Tile> GetTilesInRadius(Vector2I position, float radius)
+    {
+        List<Tile> tiles = new();
+        int intRadius = Mathf.FloorToInt(radius);
+        for (int dx = -intRadius; dx <= intRadius; dx++)
+        {
+            for (int dy = -intRadius; dy <= intRadius; dy++)
+            {
+                Vector2I checkPos = position + new Vector2I(dx, dy);
+                if (checkPos.DistanceTo(position) <= radius)
+                {
+                    tiles.Add(Tiles[checkPos]);
+                }
+            }
+        }
+        return tiles;
+    }
 }

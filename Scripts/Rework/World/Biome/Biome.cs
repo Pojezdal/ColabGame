@@ -17,14 +17,14 @@ public partial class Biome : Resource
     /// <summary>
     /// The properties defining the biome's characteristics.
     /// </summary>
-    public Dictionary<string, Property> Properties { get; init; } = new();
+    public Dictionary<string, Common.Type.Range> Properties { get; init; } = new();
 
     /// <summary>
     /// Constructor for the Biome class.
     /// </summary>
     /// <param name="name">The name of the biome.</param>
     /// <param name="properties">The properties defining the biome's characteristics.</param>
-    public Biome(string name, Dictionary<string, Property> properties = null)
+    public Biome(string name, Dictionary<string, Common.Type.Range> properties = null)
     {
         Name = name;
         if (properties != null)

@@ -13,47 +13,47 @@ public static class BiomeDatabase
     /// </summary>
     private static readonly Dictionary<string, Biome> _biomes = new Dictionary<string, Biome>()
     {
-        { "Ocean", new Biome("Ocean", new Dictionary<string, Property>()
+        { "Ocean", new Biome("Ocean", new Dictionary<string, Common.Type.Range>()
             {
-                { "height", new Property(-10.0f, 0.0f) },
-                { "moisture", new Property(1f) },
-                { "temperature", new Property(-10f, 10f) },
-                { "fertility", new Property(0f) },
+                { "height", new Common.Type.Range(-10.0f, 0.0f) },
+                { "moisture", new Common.Type.Range(1f) },
+                { "temperature", new Common.Type.Range(-10f, 10f) },
+                { "fertility", new Common.Type.Range(0f) },
             }
         ) },
         {
-            "River", new Biome("River", new Dictionary<string, Property>()
+            "River", new Biome("River", new Dictionary<string, Common.Type.Range>()
             {
-                { "height", new Property(0.0f, 20.0f) },
-                { "moisture", new Property(1f) },
-                { "temperature", new Property(-10f, 10f) },
-                { "fertility", new Property(0f) },
+                { "height", new Common.Type.Range(0.0f, 20.0f) },
+                { "moisture", new Common.Type.Range(1f) },
+                { "temperature", new Common.Type.Range(-10f, 10f) },
+                { "fertility", new Common.Type.Range(0f) },
             }
         ) },
         {
-            "Sand", new Biome("Sand", new Dictionary<string, Property>()
+            "Sand", new Biome("Sand", new Dictionary<string, Common.Type.Range>()
             {
-                { "height", new Property(0.0f, 10f) },
-                { "moisture", new Property(0.1f, 0.3f) },
-                { "temperature", new Property(10f, 30f) },
-                { "fertility", new Property(0.0f, 0.4f) },
+                { "height", new Common.Type.Range(0.0f, 10f) },
+                { "moisture", new Common.Type.Range(0.1f, 0.3f) },
+                { "temperature", new Common.Type.Range(10f, 30f) },
+                { "fertility", new Common.Type.Range(0.0f, 0.4f) },
             }
         ) },
-        { "Grass", new Biome("Grass", new Dictionary<string, Property>()
+        { "Grass", new Biome("Grass", new Dictionary<string, Common.Type.Range>()
         {
-                { "height", new Property(10.0f, 40.0f) },
-                { "moisture", new Property(0.2f, 0.5f) },
-                { "temperature", new Property(5f, 25f) },
-                { "fertility", new Property(0.6f, 1.0f) },
+                { "height", new Common.Type.Range(10.0f, 40.0f) },
+                { "moisture", new Common.Type.Range(0.2f, 0.5f) },
+                { "temperature", new Common.Type.Range(5f, 25f) },
+                { "fertility", new Common.Type.Range(0.6f, 1.0f) },
             }
         ) },
         {
-            "Rock", new Biome("Rock", new Dictionary<string, Property>()
+            "Rock", new Biome("Rock", new Dictionary<string, Common.Type.Range>()
             {
-                { "height", new Property(40.0f, 100.0f) },
-                { "moisture", new Property(0.0f, 0.4f) },
-                { "temperature", new Property(-10f, 20f) },
-                { "fertility", new Property(0.0f, 0.2f) },
+                { "height", new Common.Type.Range(40.0f, 100.0f) },
+                { "moisture", new Common.Type.Range(0.0f, 0.4f) },
+                { "temperature", new Common.Type.Range(-10f, 20f) },
+                { "fertility", new Common.Type.Range(0.0f, 0.2f) },
             }
         ) },
     };
