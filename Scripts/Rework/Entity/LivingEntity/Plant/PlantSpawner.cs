@@ -44,9 +44,8 @@ public partial class PlantSpawner : EntitySpawner
         var selectedTile = validTiles.Count > 0 ? Utils.RNG.Instance.Choice(validTiles) : null;
         if (selectedTile != null)
         {
-            var offspring = plant.CreateOffspring($"plant_{_idCounter++}");
-            selectedTile.SetStaticEntity(offspring);
-            offspring.Reproduced += Spawn;
+            selectedTile.SetStaticEntity(plant);
+            plant.Reproduced += Spawn;
         }
     }
 

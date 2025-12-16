@@ -38,17 +38,25 @@ public abstract partial class Entity : RefCounted
     public Dictionary<string, float> Properties { get; init; }
 
     /// <summary>
+    /// States of the entity.
+    /// Define dynamic attributes that can change over time.
+    /// </summary>
+    public Dictionary<string, float> States { get; init; }
+
+    /// <summary>
     /// Constructor for the Entity class.
     /// </summary>
     /// <param name="id">The unique identifier for the entity.</param>
     /// <param name="tags">Tags associated with the entity.</param>
     /// <param name="properties">Properties of the entity.</param>
-    public Entity(string id, HashSet<string> tags = null, Dictionary<string, float> properties = null)
+    /// <param name="states">States of the entity.</param>
+    public Entity(string id, HashSet<string> tags = null, Dictionary<string, float> properties = null, Dictionary<string, float> states = null)
     {
         Id = id;
         Tags = tags ?? new();
         Tags.Add("Entity");
         Properties = properties ?? new();
+        States = states ?? new();
     }
 
     /// <summary>
@@ -66,5 +74,10 @@ public abstract partial class Entity : RefCounted
     /// <param name="delta">The time elapsed since the last update.</param>
     public abstract void Tick(float delta);
 
-    //public abstract EntityNode CreateNode();
+    /// <summary>
+    /// Creates a visual node representation of the entity at the specified position.
+    /// </summary>
+    /// <param name="position">The position where the node should be created.</param>
+    /// <returns>The created entity node.</returns>
+    public abstract EntityNode CreateNode(Vector2 position);
 }

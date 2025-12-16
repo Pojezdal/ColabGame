@@ -34,7 +34,7 @@ public partial class Carrot : Plant
             { "reproduction_rate", 1 / 5.0f },
             { "reproduction_radius", 2 },
             { "lifespan", 15 },
-            { "nutrient_consumption", 0.5f },
+            { "nutrient_consumption", 2.0f },
         },
         spawnConditions:
         [
@@ -48,5 +48,15 @@ public partial class Carrot : Plant
             )
         ])
     {
+    }
+
+    /// <summary>
+    /// Creates a visual node representation of the carrot at the specified position.
+    /// </summary>
+    /// <param name="position">The position where the node should be created.</param>
+    /// <returns>The created carrot node.</returns>
+    public override CarrotNode CreateNode(Vector2 position)
+    {
+        return CarrotNode.Instantiate(this, position);
     }
 }

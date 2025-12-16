@@ -115,7 +115,11 @@ public partial class Tile : RefCounted
         States["nutrients"] = Mathf.Clamp(States["nutrients"], 0, Properties["max_nutrients"]);
         if (States["nutrients"] == 0 && StaticEntity != null && StaticEntity.Properties.ContainsKey("nutrient_consumption"))
         {
-            StaticEntity.Properties["health"] -= 1 * delta;
+            StaticEntity.States["health"] -= 1 * delta;
+        }
+        if (StaticEntity != null)
+        {
+            StaticEntity.Tick(delta);
         }
     }
 
@@ -130,7 +134,7 @@ public partial class Tile : RefCounted
         Properties["height"] = Biome.Properties["height"].Lerp(NoiseValuesNorm["height"]);
         Properties["moisture"] = Biome.Properties["moisture"].Lerp(NoiseValuesNorm["moisture"]);
         Properties["temperature"] = Utils.RNG.Instance.FloatGaussian(Biome.Properties["temperature"]);
-        Properties["fertility"] = Utils.RNG.Instance.FloatGaussian(Biome.Properties["fertility"]);
+        Properties["fertility"] = Utils.RNG.Instance.Float(Biome.Properties["fertility"]);
         Properties["max_nutrients"] = Properties["fertility"] * 100f;
         Properties["nutrients_growth"] = Properties["fertility"];
     }

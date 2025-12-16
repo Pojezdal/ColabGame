@@ -9,6 +9,23 @@ namespace Rework.World;
 public partial class World : RefCounted
 {
     /// <summary>
+    /// Signal emitted when a static entity is added to the world.
+    /// </summary>
+    [Signal]
+    public delegate void StaticEntityAddedEventHandler(Entity.Entity entity);
+
+    /// <summary>
+    /// Signal emitted when a static entity is removed from the world.
+    /// </summary>
+    [Signal]
+    public delegate void StaticEntityRemovedEventHandler(Entity.Entity entity);
+
+    /// <summary>
+    /// The plant spawner responsible for spawning plants in the world.
+    /// </summary>
+    public readonly Entity.LivingEntity.Plant.PlantSpawner PlantSpawner;
+
+    /// <summary>
     /// The seed data used for world generation.
     /// </summary>
     public WorldSeed SeedData { get; init; }
@@ -34,6 +51,7 @@ public partial class World : RefCounted
     /// <param name="seedData">The seed data used for world generation.</param>
     public World(WorldSeed seedData)
     {
+        PlantSpawner = new Entity.LivingEntity.Plant.PlantSpawner(this);
         SeedData = seedData;
         _rng = new Utils.RNG(seedData.Randomize ? null : seedData.Seed);
         _center = new Vector2I(SeedData.WorldSize.X / 2, SeedData.WorldSize.Y / 2);
@@ -67,6 +85,8 @@ public partial class World : RefCounted
 
                 var biome = Biome.BiomeDatabase.Get(SeedData.GetBiome(height, moisture, out var norms));
                 Tiles[pos] = new Tile(pos, biome, new() { { "height", height }, { "moisture", moisture } }, norms);
+                Tiles[pos].StaticEntityAdded += entity => EmitSignal(SignalName.StaticEntityAdded, entity);
+                Tiles[pos].StaticEntityRemoved += entity => EmitSignal(SignalName.StaticEntityRemoved, entity);
             }
         }
 
@@ -101,6 +121,18 @@ public partial class World : RefCounted
                 possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Left], Tiles[current.Position + Vector2I.Left].NoiseValues["height"]);
             if (!river.Contains(current.Position + Vector2I.Right))
                 possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Right], Tiles[current.Position + Vector2I.Right].NoiseValues["height"]);
+        }
+    }
+
+    /// <summary>
+    /// Updates the world's state over time.
+    /// </summary>
+    /// <param name="delta">The time elapsed since the last update.</param>
+    public void Tick(float delta)
+    {
+        foreach (var tile in Tiles.Values)
+        {
+            tile.Tick(delta);
         }
     }
 

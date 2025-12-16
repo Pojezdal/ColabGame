@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://d4igysc2obb7g"]
+
+[ext_resource type="PackedScene" uid="uid://dbilrqyvso3xu" path="res://Scenes/Rework/Entity/LivingEntity/LivingEntityNode.tscn" id="1_7haoe"]
+[ext_resource type="Script" uid="uid://doy0npln2fhyt" path="res://Scripts/Rework/Entity/LivingEntity/Plant/PlantNode.cs" id="2_2ol4h"]
+
+[node name="PlantNode" instance=ExtResource("1_7haoe")]
+script = ExtResource("2_2ol4h")

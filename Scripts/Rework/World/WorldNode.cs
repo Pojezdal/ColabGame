@@ -16,9 +16,20 @@ public partial class WorldNode : Node2D
     public WorldSeed SeedData { get; private set; } = null;
 
     /// <summary>
+    /// The size of each tile in the world.
+    /// </summary>
+    [Export]
+    public Vector2I TileSize { get; private set; } = new(32, 32);
+
+    /// <summary>
     /// Maps biome names to terrain indices.
     /// </summary>
     private readonly Dictionary<string, int> _biomeToTerrainMap = new();
+
+    /// <summary>
+    /// The world data associated with this node.
+    /// </summary>
+    public World Data { get; private set; }
 
     /// <summary>
     /// Initializes the world node with the given world data.
@@ -26,6 +37,9 @@ public partial class WorldNode : Node2D
     /// <param name="data">The world data to initialize with.</param>
     public void Init(World data)
     {
+        Data = data;
+        Data.StaticEntityAdded += CreateEntityNode;
+        Data.PlantSpawner.Spawn(new Entity.LivingEntity.Plant.Carrot("carrot_0"), new Vector2I(75, 75), 10);
         var worldlayer = GetNode<TileMapLayer>("WorldLayer");
         var overlaylayerHM = GetNode<TileMapLayer>("OverlayLayerHM");
         overlaylayerHM.ChildEnteredTree += (Node child) =>
@@ -55,6 +69,8 @@ public partial class WorldNode : Node2D
             overlaylayerHM.SetCell(tile.Position, 0, Vector2I.Zero, 1);
             overlaylayerTF.SetCell(tile.Position, 0, Vector2I.Zero, 1);
         }
+        var tickTimer = GetNode<Timer>("TickTimer");
+        tickTimer.Timeout += () => Data.Tick((float)tickTimer.WaitTime);
     }
 
     /// <summary>
@@ -64,5 +80,16 @@ public partial class WorldNode : Node2D
     public override void _Ready()
     {
         Init(new World(SeedData));
+    }
+
+    /// <summary>
+    /// Creates and adds an entity node to the scene for the given entity.
+    /// </summary>
+    /// <param name="entity">The entity for which to create the node.</param>
+    private void CreateEntityNode(Entity.Entity entity)
+    {
+        var worldPos = entity.TilePosition * TileSize + TileSize / 2;
+        var entityNode = entity.CreateNode(worldPos);
+        GetNode<Node2D>("EntityLayer").AddChild(entityNode);
     }
 }

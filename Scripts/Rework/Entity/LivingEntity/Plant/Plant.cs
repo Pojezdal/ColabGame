@@ -61,10 +61,10 @@ public abstract partial class Plant : LivingEntity
         // Update reproduction
         if (States["growth_progress"] == 1.0f)
         {
-            States["reproduction_progress"] += delta;
-            if (States["reproduction_progress"] >= Properties["reproduction_time"])
+            States["reproduction_progress"] += Properties["reproduction_rate"] * delta;
+            if (States["reproduction_progress"] >= 1.0f)
             {
-                States["reproduction_progress"] -= Properties["reproduction_time"];
+                States["reproduction_progress"] -= 1.0f;
                 EmitSignal(SignalName.Reproduced, this);
             }
         }
@@ -102,7 +102,7 @@ public abstract partial class Plant : LivingEntity
         return (Plant)ctor.Invoke([id,
             new HashSet<string>(Tags),
             new Dictionary<string, float>(Properties),
-            new Dictionary<string, float>(States),
+            null,//new Dictionary<string, float>(States),
             new List<SpawnCondition>(SpawnConditions) // Right now, this creates a shallow copy, might need deep copy later
         ]);
     }

@@ -81,7 +81,7 @@ public class RNG
     /// <returns>A random float following a Gaussian distribution.</returns>
     public float FloatGaussian(float mean = 0f, float deviation = 1f)
     {
-        return _gdRng.Randfn(mean, deviation);
+        return (deviation > 0) ? _gdRng.Randfn(mean, deviation) : mean;
     }
 
     /// <summary>

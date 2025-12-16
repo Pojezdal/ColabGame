@@ -9,12 +9,6 @@ namespace Rework.Entity.LivingEntity;
 public abstract partial class LivingEntity : Entity
 {
     /// <summary>
-    /// States of the living entity.
-    /// Define dynamic attributes that can change over time.
-    /// </summary>
-    public Dictionary<string, float> States { get; init; }
-
-    /// <summary>
     /// Constructor for the LivingEntity class.
     /// </summary>
     /// <param name="id">The unique identifier for the living entity.</param>
@@ -22,9 +16,8 @@ public abstract partial class LivingEntity : Entity
     /// <param name="properties">Properties of the living entity.</param>
     /// <param name="states">States of the living entity.</param>
     public LivingEntity(string id, HashSet<string> tags = null, Dictionary<string, float> properties = null, Dictionary<string, float> states = null)
-        : base(id, tags, properties)
+        : base(id, tags, properties, states)
     {
         Tags.Add("LivingEntity");
-        States = states ?? new();
     }
 }

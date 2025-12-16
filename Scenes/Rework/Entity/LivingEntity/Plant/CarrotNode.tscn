@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3 uid="uid://jh3tx081hn82"]
+
+[ext_resource type="PackedScene" uid="uid://d4igysc2obb7g" path="res://Scenes/Rework/Entity/LivingEntity/Plant/PlantNode.tscn" id="1_okli6"]
+[ext_resource type="Script" uid="uid://b3jnkdt6cb8o6" path="res://Scripts/Rework/Entity/LivingEntity/Plant/CarrotNode.cs" id="2_e0nkd"]
+[ext_resource type="Texture2D" uid="uid://c0vlc33u74rk7" path="res://Assets/Sprites/Tiles/full_tile_set.png" id="3_p6qg8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8iaxg"]
+atlas = ExtResource("3_p6qg8")
+region = Rect2(192, 112, 32, 32)
+
+[node name="CarrotNode" instance=ExtResource("1_okli6")]
+script = ExtResource("2_e0nkd")
+
+[node name="Sprite2D" parent="." index="0"]
+texture = SubResource("AtlasTexture_8iaxg")

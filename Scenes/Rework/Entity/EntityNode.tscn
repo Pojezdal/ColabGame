@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://5cst5wl8vwm5"]
+
+[ext_resource type="Script" uid="uid://c20ye4rssn53o" path="res://Scripts/Rework/Entity/EntityNode.cs" id="1_t4p1g"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_t4p1g"]
+size = Vector2(32, 32)
+
+[node name="EntityNode" type="Node2D"]
+script = ExtResource("1_t4p1g")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_t4p1g")

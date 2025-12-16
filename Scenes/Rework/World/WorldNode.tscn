@@ -66,7 +66,10 @@ SeedData = SubResource("Resource_873j4")
 [node name="WorldLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_j0p0s")
 
+[node name="EntityLayer" type="Node2D" parent="."]
+
 [node name="OverlayLayerHM" type="TileMapLayer" parent="."]
+visible = false
 tile_set = SubResource("TileSet_0h01y")
 
 [node name="OverlayLayerTF" type="TileMapLayer" parent="."]
@@ -74,4 +77,8 @@ visible = false
 tile_set = SubResource("TileSet_0h01y")
 
 [node name="WorldCamera" type="Camera2D" parent="."]
+position = Vector2(576, 324)
 script = ExtResource("7_0h01y")
+
+[node name="TickTimer" type="Timer" parent="."]
+autostart = true
