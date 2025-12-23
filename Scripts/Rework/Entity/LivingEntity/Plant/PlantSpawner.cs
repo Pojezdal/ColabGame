@@ -46,6 +46,13 @@ public partial class PlantSpawner : EntitySpawner
         {
             selectedTile.SetStaticEntity(plant);
             plant.Reproduced += Spawn;
+
+            List<World.Tile> influenceTiles = WorldData.GetTilesInRadius(selectedTile.Position, plant.Properties["influence_radius"]);
+            foreach (var tile in influenceTiles)
+            {
+                tile.AddEntityInfluence(plant);
+                plant.Disposed += () => tile.RemoveEntityInfluence(plant);
+            }
         }
     }
 

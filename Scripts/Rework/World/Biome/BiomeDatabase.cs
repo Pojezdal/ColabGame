@@ -40,11 +40,18 @@ public static class BiomeDatabase
             }
         ) },
         { "Grass", new Biome("Grass", new Dictionary<string, Common.Type.Range>()
-        {
+            {
                 { "height", new Common.Type.Range(10.0f, 40.0f) },
                 { "moisture", new Common.Type.Range(0.2f, 0.5f) },
                 { "temperature", new Common.Type.Range(5f, 25f) },
                 { "fertility", new Common.Type.Range(0.6f, 1.0f) },
+            },
+            new List<SubBiomeRule>()
+            {
+                new SubBiomeRule("Field", new Dictionary<string, float>()
+                {
+                    { "Carrot", 1.0f },
+                }),
             }
         ) },
         {
@@ -59,11 +66,26 @@ public static class BiomeDatabase
     };
 
     /// <summary>
+    /// Predefined sub-biomes with their properties.
+    /// </summary>
+    private static readonly Dictionary<string, SubBiome> _subBiomes = new Dictionary<string, SubBiome>()
+    {
+        { "Field", new SubBiome("Field", new Dictionary<string, Common.Type.Range>()
+            {
+                { "height", new Common.Type.Range(20.0f, 60.0f) },
+                { "moisture", new Common.Type.Range(0.4f, 0.7f) },
+                { "temperature", new Common.Type.Range(0f, 20f) },
+                { "fertility", new Common.Type.Range(0.5f, 1.0f) },
+            }
+        ) },
+    };
+
+    /// <summary>
     /// Retrieves a biome by name.
     /// </summary>
     /// <param name="name">The name of the biome.</param>
     /// <returns>The corresponding Biome object.</returns>
-    public static Biome Get(string name)
+    public static Biome GetBiome(string name)
     {
         if (_biomes.TryGetValue(name, out var biome))
         {
@@ -71,5 +93,20 @@ public static class BiomeDatabase
         }
         GD.PrintErr($"Biome '{name}' not found in database. Returning empty biome.");
         return new Biome("Enmpty Biome");
+    }
+
+    /// <summary>
+    /// Retrieves a sub-biome by name.
+    /// </summary>
+    /// <param name="name">The name of the sub-biome.</param>
+    /// <returns>The corresponding SubBiome object.</returns>
+    public static SubBiome GetSubBiome(string name)
+    {
+        if (_subBiomes.TryGetValue(name, out var subBiome))
+        {
+            return subBiome;
+        }
+        GD.PrintErr($"SubBiome '{name}' not found in database. Returning empty sub-biome.");
+        return new SubBiome("Empty SubBiome");
     }
 }

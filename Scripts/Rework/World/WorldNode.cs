@@ -65,9 +65,13 @@ public partial class WorldNode : Node2D
 
         foreach (var tile in data.Tiles.Values)
         {
-            worldlayer.SetCellsTerrainConnect([tile.Position], 0, _biomeToTerrainMap[tile.Biome.Name]);
+            worldlayer.SetCellsTerrainConnect([tile.Position], 0, _biomeToTerrainMap[tile.EffectiveBiome.Name]);
             overlaylayerHM.SetCell(tile.Position, 0, Vector2I.Zero, 1);
             overlaylayerTF.SetCell(tile.Position, 0, Vector2I.Zero, 1);
+            tile.BiomeChanged += (Tile changedTile) =>
+            {
+                worldlayer.SetCellsTerrainConnect([changedTile.Position], 0, _biomeToTerrainMap[changedTile.EffectiveBiome.Name]);
+            };
         }
         var tickTimer = GetNode<Timer>("TickTimer");
         tickTimer.Timeout += () => Data.Tick((float)tickTimer.WaitTime);

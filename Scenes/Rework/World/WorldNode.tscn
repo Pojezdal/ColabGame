@@ -35,6 +35,9 @@ texture_region_size = Vector2i(32, 32)
 0:3/0 = 0
 0:3/0/terrain_set = 0
 0:3/0/terrain = 4
+2:2/0 = 0
+2:2/0/terrain_set = 0
+2:2/0/terrain = 5
 
 [sub_resource type="TileSet" id="TileSet_j0p0s"]
 tile_size = Vector2i(32, 32)
@@ -49,6 +52,8 @@ terrain_set_0/terrain_3/name = "Sand"
 terrain_set_0/terrain_3/color = Color(0.6901041, 0.68989956, 0.23759428, 1)
 terrain_set_0/terrain_4/name = "Rock"
 terrain_set_0/terrain_4/color = Color(0.25044796, 0.2578125, 0.24565317, 1)
+terrain_set_0/terrain_5/name = "Field"
+terrain_set_0/terrain_5/color = Color(0.4244792, 0.24052912, 0.08929242, 1)
 sources/0 = SubResource("TileSetAtlasSource_2hl55")
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_fupld"]

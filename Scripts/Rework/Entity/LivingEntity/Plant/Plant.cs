@@ -42,6 +42,9 @@ public abstract partial class Plant : LivingEntity
         Properties.TryAdd("lifespan", 15);
         Properties.TryAdd("nutrient_consumption", 0.5f);
 
+        Properties.TryAdd("influence", 1.0f);
+        Properties.TryAdd("influence_radius", 1f);
+
         States.TryAdd("health", 5);
         States.TryAdd("age", 0);
         States.TryAdd("growth_progress", 0);

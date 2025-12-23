@@ -9,6 +9,12 @@ namespace Rework.World;
 public partial class World : RefCounted
 {
     /// <summary>
+    /// Signal emitted when the biome or sub-biome of a tile changes.
+    /// </summary>
+    [Signal]
+    public delegate void BiomeChangedEventHandler(Tile tile);
+
+    /// <summary>
     /// Signal emitted when a static entity is added to the world.
     /// </summary>
     [Signal]
@@ -83,10 +89,11 @@ public partial class World : RefCounted
                 // Apply island mask to height, negative changes the height to below sea level
                 height = (mask <= 0) ? Mathf.Max(mask, -1) : height;
 
-                var biome = Biome.BiomeDatabase.Get(SeedData.GetBiome(height, moisture, out var norms));
+                var biome = Biome.BiomeDatabase.GetBiome(SeedData.GetBiome(height, moisture, out var norms));
                 Tiles[pos] = new Tile(pos, biome, new() { { "height", height }, { "moisture", moisture } }, norms);
                 Tiles[pos].StaticEntityAdded += entity => EmitSignal(SignalName.StaticEntityAdded, entity);
                 Tiles[pos].StaticEntityRemoved += entity => EmitSignal(SignalName.StaticEntityRemoved, entity);
+                Tiles[pos].BiomeChanged += tile => EmitSignal(SignalName.BiomeChanged, tile);
             }
         }
 
@@ -111,7 +118,7 @@ public partial class World : RefCounted
             if (river.Contains(current.Position))
                 continue;
 
-            current.UpdateBiome(Biome.BiomeDatabase.Get("River"));
+            current.UpdateBiome(Biome.BiomeDatabase.GetBiome("River"));
             river.Add(current.Position);
             if (!river.Contains(current.Position + Vector2I.Up))
                 possibleSpills.Enqueue(Tiles[current.Position + Vector2I.Up], Tiles[current.Position + Vector2I.Up].NoiseValues["height"]);

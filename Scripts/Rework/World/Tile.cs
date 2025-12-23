@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Rework.World.Biome;
 using Godot;
 
 namespace Rework.World;
@@ -8,6 +9,12 @@ namespace Rework.World;
 /// </summary>
 public partial class Tile : RefCounted
 {
+    /// <summary>
+    /// Emitted when the biome or sub-biome of the tile changes.
+    /// </summary>
+    [Signal]
+    public delegate void BiomeChangedEventHandler(Tile tile);
+
     /// <summary>
     /// Emitted when a static entity is added to the tile.
     /// </summary>
@@ -33,7 +40,12 @@ public partial class Tile : RefCounted
     /// <summary>
     /// The sub-biome of the tile.
     /// </summary>
-    public Biome.SubBiome SubBiome { get; private set; } = null;
+    public SubBiome SubBiome { get; private set; } = null;
+
+    /// <summary>
+    /// The effective biome of the tile, considering sub-biome if present.
+    /// </summary>
+    public Biome.Biome EffectiveBiome => SubBiome ?? Biome;
 
     /// <summary>
     /// Noise values associated with the tile.
@@ -61,6 +73,12 @@ public partial class Tile : RefCounted
     /// The static entity present on the tile, if any.
     /// </summary>
     public Entity.Entity StaticEntity { get; private set; } = null;
+
+    /// <summary>
+    /// Influence values from entities present on or near the tile.
+    /// Aggregated by entity tags.
+    /// </summary>
+    public Dictionary<string, float> EntityInfluence { get; private set; } = new();
 
     /// <summary>
     /// Constructor for the Tile class.
@@ -105,6 +123,52 @@ public partial class Tile : RefCounted
     public void RemoveStaticEntity() => SetStaticEntity(null);
 
     /// <summary>
+    /// Adds influence from an entity to the tile.
+    /// The influence is calculated based on the entity's properties and distance to the tile.
+    /// Right now it uses a simple formula: influence / (1 + distance), so it falls off quickly, and then slows down.
+    /// Automatically updates the tile's sub-biome if necessary.
+    /// </summary>
+    /// <param name="entity">The entity whose influence is to be added.</param>
+    public void AddEntityInfluence(Entity.Entity entity)
+    {
+        float influence = entity.Properties.GetValueOrDefault("influence", 0f);
+        float distance = Position.DistanceTo(entity.TilePosition);
+        float influenceStrength = influence / (1 + distance);
+        foreach (var tag in entity.Tags)
+        {
+            if (EntityInfluence.ContainsKey(tag))
+                EntityInfluence[tag] += influenceStrength;
+            else
+                EntityInfluence[tag] = influenceStrength;
+        }
+        CheckSubBiome();
+    }
+
+    /// <summary>
+    /// Removes influence from an entity from the tile.
+    /// The influence is calculated based on the entity's properties and distance to the tile.
+    /// Right now it uses a simple formula: influence / (1 + distance), so it falls off quickly, and then slows down.
+    /// Automatically updates the tile's sub-biome if necessary.
+    /// </summary>
+    /// <param name="entity">The entity whose influence is to be removed.</param>
+    public void RemoveEntityInfluence(Entity.Entity entity)
+    {
+        float influence = entity.Properties.GetValueOrDefault("influence", 0f);
+        float distance = Position.DistanceTo(entity.TilePosition);
+        float influenceStrength = influence / (1 + distance);
+        foreach (var tag in entity.Tags)
+        {
+            if (EntityInfluence.ContainsKey(tag))
+            {
+                EntityInfluence[tag] -= influenceStrength;
+                if (EntityInfluence[tag] <= 0)
+                    EntityInfluence.Remove(tag);
+            }
+        }
+        CheckSubBiome();
+    }
+
+    /// <summary>
     /// Updates the tile's states over time.
     /// </summary>
     /// <param name="delta">The time elapsed since the last update.</param>
@@ -137,5 +201,41 @@ public partial class Tile : RefCounted
         Properties["fertility"] = Utils.RNG.Instance.Float(Biome.Properties["fertility"]);
         Properties["max_nutrients"] = Properties["fertility"] * 100f;
         Properties["nutrients_growth"] = Properties["fertility"];
+        EmitSignal(SignalName.BiomeChanged, this);
+    }
+
+    /// <summary>
+    /// Checks and updates the sub-biome of the tile based on entity influences.
+    /// The first matching sub-biome rule is applied. If no rules match, the sub-biome is set to null.
+    /// </summary>
+    public void CheckSubBiome()
+    {
+        foreach (var rule in Biome.Rules)
+        {
+            bool match = true;
+            foreach (var (tag, threshold) in rule.InfluenceThresholds)
+            {
+                float influenceValue = EntityInfluence.GetValueOrDefault(tag, 0f);
+                if (influenceValue < threshold)
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                if (SubBiome?.Name != rule.SubBiomeName)
+                {
+                    SubBiome = BiomeDatabase.GetSubBiome(rule.SubBiomeName);
+                    EmitSignal(SignalName.BiomeChanged, this);
+                }
+                return;
+            }
+        }
+        if (SubBiome != null)
+        {
+            SubBiome = null;
+            EmitSignal(SignalName.BiomeChanged, this);   
+        }
     }
 }
